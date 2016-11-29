@@ -10,7 +10,10 @@ public class AtlasGenerator : EditorWindow
     public bool AlgorithmTwo = false;
     public bool AlgorithmThree = false;
 
+    public Texture2D[] atlasTextures;
+    
 
+    public Texture2D genAtlas;
 
 
     ////  FILES  //
@@ -59,35 +62,47 @@ public class AtlasGenerator : EditorWindow
     {
         AtlasGenerator window = GetWindow<AtlasGenerator>();
         window.titleContent.text = "Atlas Generator";
-        window.maxSize = new Vector2(350.0f, 200.0f);
+        window.minSize = new Vector2(350.0f, 500.0f);
     }
 
     void OnGUI()
     {
-       if (GUILayout.Toggle(AlgorithmOne, "Algorithm 1", texSelectStyle))
+        if (GUILayout.Toggle(AlgorithmOne, "Algorithm 1", texSelectStyle))
         {
             AlgorithmOne = true;
             AlgorithmTwo = false;
             AlgorithmThree = false;
         }
 
-       if (GUILayout.Toggle(AlgorithmTwo, "Algorithm 2", texSelectStyle))
+        if (GUILayout.Toggle(AlgorithmTwo, "Algorithm 2", texSelectStyle))
         {
             AlgorithmTwo = true;
             AlgorithmOne = false;
             AlgorithmThree = false;
         }
 
-       if (GUILayout.Toggle(AlgorithmThree, "Algorithm 3", texSelectStyle))
+        if (GUILayout.Toggle(AlgorithmThree, "Algorithm 3", texSelectStyle))
         {
             AlgorithmThree = true;
             AlgorithmOne = false;
             AlgorithmTwo = false;
         }
-
-       if (GUILayout.Button("Generate", buttonStyle))
+        
+        if (GUILayout.Button("AddTextures", buttonStyle))
         {
-
+            atlasTextures = Resources.LoadAll<Texture2D>("Textures");
+            Debug.Log(atlasTextures.Length);
         }
-    }   
+
+        if (GUILayout.Button("Generate", buttonStyle))
+        {
+            genAtlas = new Texture2D(1024, 1024);
+            genAtlas.PackTextures(atlasTextures, 0, 1024);
+            //genAtlas = Texture2D.PackTectures(atlasTextures, 0, 8192);
+            Debug.Log("Generated atlas.");
+            Debug.Log(genAtlas.width);
+        }
+
+        GUILayout.Label(genAtlas, texPreviewStyle);
+    }
 }
