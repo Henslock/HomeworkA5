@@ -3,6 +3,8 @@ using UnityEditor;
 using System.Collections;
 using System.IO;
 
+using System;
+
 
 public class AtlasGenerator : EditorWindow
 {
@@ -10,35 +12,186 @@ public class AtlasGenerator : EditorWindow
     public bool AlgorithmTwo = false;
     public bool AlgorithmThree = false;
 
+    public int atlasSize = 6144;
+
     public Texture2D[] atlasTextures;
     
 
     public Texture2D genAtlas;
 
+    public static int compareText(Texture2D t1, Texture2D t2)
+    {
+        if (t1.height > t2.height)
+        {
+            return -1;
+        }
+        if (t1.height == t2.height)
+        {
+            return 0;
+        }
+        else
+        {
+            return 1;
+        }
+    }
 
-    ////  FILES  //
+    void algorithmOne()
+    {
+        genAtlas = new Texture2D(atlasSize, atlasSize);
+        
+        int texWidth = 0;
+        int texWidth2 = 0;
+        int texWidth3 = 0;
+        int texWidth4 = 0;
 
-    //private static string filepath = "Assets/Project/Textures & Images/";
-    //private static string filename = "";
+        int totalHeight = 0;
+        int totalHeight2 = 0;
+        int testHeight = atlasTextures[0].height;
 
-    ////  BASE AND RESULT TEXTURES  //
+        for (int i = 0; i < atlasTextures.Length; i++)
+        {
+            texWidth = texWidth + atlasTextures[i].width;
 
-    //private static Texture2D baseTex;
-    //private static Texture2D resultTex;
+            if (texWidth <= atlasSize)
+            {
+                Color[] placePixels = atlasTextures[i].GetPixels();
+                genAtlas.SetPixels((texWidth - atlasTextures[i].width), 0, atlasTextures[i].width, atlasTextures[i].height, placePixels, 0); 
+            }
 
-    ////  MASKING  //
+            if (texWidth > atlasSize)
+            {
+                if (totalHeight <= testHeight)
+                {
+                    totalHeight = testHeight + atlasTextures[i].height;
+                }
 
-    //private static Texture2D maskTex;
-    //private static Color maskTint = Color.white;
+                texWidth = texWidth - atlasTextures[i].width;
+                texWidth2 = texWidth2 + atlasTextures[i].width;
 
-    ////  SOLID TINTING/BLENDING  //
+                if (texWidth2 <= atlasSize)
+                {
 
-    //private static Color tint = Color.white;
+                    Color[] placePixels = atlasTextures[i].GetPixels();
+                    genAtlas.SetPixels((texWidth2 - atlasTextures[i].width), atlasTextures[0].height, atlasTextures[i].width, atlasTextures[i].height, placePixels, 0);
 
+                }
 
+                if (texWidth2 > atlasSize)
+                {
+                    if (totalHeight2 <= totalHeight)
+                    {
+                        totalHeight2 = totalHeight + atlasTextures[i].height;
+                    }
 
+                    texWidth2 = texWidth2 - atlasTextures[i].width;
+                    texWidth3 = texWidth3 + atlasTextures[i].width;
 
-    //  LAYOUT  //
+                    if (texWidth3 <= atlasSize)
+                    {
+                        Color[] placePixels = atlasTextures[i].GetPixels();
+                        genAtlas.SetPixels((texWidth3 - atlasTextures[i].width), totalHeight, atlasTextures[i].width, atlasTextures[i].height, placePixels, 0);
+                    }
+
+                    if (texWidth3 > atlasSize)
+                    {
+                        texWidth3 = texWidth3 - atlasTextures[i].width;
+                        texWidth4 = texWidth4 + atlasTextures[i].width;
+
+                        Color[] placePixels = atlasTextures[i].GetPixels();
+                        genAtlas.SetPixels((texWidth4 - atlasTextures[i].width), totalHeight2, atlasTextures[i].width, atlasTextures[i].height, placePixels, 0);
+                    }
+                }
+            }
+
+            else
+            {
+            }
+
+        }
+
+        genAtlas.Apply();
+    }
+
+    void algorithmTwo()
+    {
+        genAtlas = new Texture2D(atlasSize, atlasSize);
+
+        int texWidth = 0;
+        int texWidth2 = 0;
+        int texWidth3 = 0;
+        int texWidth4 = 0;
+
+        int totalHeight = 0;
+        int totalHeight2 = 0;
+        int testHeight = atlasTextures[0].height;
+
+        for (int i = 0; i < atlasTextures.Length; i++)
+        {
+            texWidth = texWidth + atlasTextures[i].width;
+
+            if (texWidth <= atlasSize)
+            {
+                Color[] placePixels = atlasTextures[i].GetPixels();
+                genAtlas.SetPixels((texWidth - atlasTextures[i].width), 0, atlasTextures[i].width, atlasTextures[i].height, placePixels, 0);
+
+            }
+
+            if (texWidth > atlasSize)
+            {
+                if (totalHeight <= testHeight)
+                {
+                    totalHeight = testHeight + atlasTextures[i].height;
+                }
+
+                texWidth2 = texWidth2 + atlasTextures[i].width;
+
+                if (texWidth2 <= atlasSize)
+                {
+
+                    Color[] placePixels = atlasTextures[i].GetPixels();
+                    genAtlas.SetPixels((texWidth2 - atlasTextures[i].width), atlasTextures[0].height, atlasTextures[i].width, atlasTextures[i].height, placePixels, 0);
+
+                }
+
+                if (texWidth2 > atlasSize)
+                {
+                    if (totalHeight2 <= totalHeight)
+                    {
+                        totalHeight2 = totalHeight + atlasTextures[i].height;
+                    }
+
+                    texWidth3 = texWidth3 + atlasTextures[i].width;
+
+                    if (texWidth3 <= atlasSize)
+                    {
+                        Color[] placePixels = atlasTextures[i].GetPixels();
+                        genAtlas.SetPixels((texWidth3 - atlasTextures[i].width), totalHeight, atlasTextures[i].width, atlasTextures[i].height, placePixels, 0);
+                    }
+
+                    if (texWidth3 > atlasSize)
+                    {
+                        texWidth4 = texWidth4 + atlasTextures[i].width;
+
+                        Color[] placePixels = atlasTextures[i].GetPixels();
+                        genAtlas.SetPixels((texWidth4 - atlasTextures[i].width), totalHeight2, atlasTextures[i].width, atlasTextures[i].height, placePixels, 0);
+                    }
+                }
+            }
+
+            else
+            {
+            }
+
+        }
+
+        genAtlas.Apply();
+    }
+
+    void algorithmThree()
+    {
+
+    }
+
 
     private static GUILayoutOption[] buttonStyle =
     {
@@ -55,7 +208,7 @@ public class AtlasGenerator : EditorWindow
         GUILayout.Width(256), GUILayout.Height(256)
     };
 
-    private static GUILayoutOption[] blankStyle = { };
+   
 
     [MenuItem("Window/AtlasGenerator", false, 25)]
     public static void ShowWindow()
@@ -91,16 +244,63 @@ public class AtlasGenerator : EditorWindow
         if (GUILayout.Button("AddTextures", buttonStyle))
         {
             atlasTextures = Resources.LoadAll<Texture2D>("Textures");
-            Debug.Log(atlasTextures.Length);
+            Debug.Log("Textures added: " + atlasTextures.Length);
+            Array.Sort(atlasTextures, compareText);
         }
 
         if (GUILayout.Button("Generate", buttonStyle))
         {
-            genAtlas = new Texture2D(1024, 1024);
-            genAtlas.PackTextures(atlasTextures, 0, 1024);
+            //genAtlas.PackTextures(atlasTextures, 0, atlasSize);
             //genAtlas = Texture2D.PackTectures(atlasTextures, 0, 8192);
             Debug.Log("Generated atlas.");
-            Debug.Log(genAtlas.width);
+           
+
+            if (AlgorithmOne == true)
+            {
+                algorithmOne();
+            }
+
+            if (AlgorithmTwo == true)
+            {
+                algorithmTwo();
+            }
+        }
+
+        if (GUILayout.Button("Save", buttonStyle))
+        {
+            if (!Directory.Exists(Application.dataPath + "/Atlases"))
+            {
+                Directory.CreateDirectory(Application.dataPath + "/Atlases");
+            }
+            byte[] bytes = genAtlas.EncodeToPNG();
+            File.WriteAllBytes(Application.dataPath + "/Atlases/TestAtlas.png", bytes);
+
+
+            Debug.Log("Saved!");
+        }
+
+        if (GUILayout.Button("Display Memory Savings", buttonStyle))
+        {
+            if(genAtlas)
+            {
+                float g_fileSize = 0;
+                var a_fileSize = new System.IO.FileInfo(Application.dataPath + "/Atlases/TestAtlas.png");
+                var info = new DirectoryInfo(Application.dataPath + "/Assets/Resources/Textures");
+                FileInfo[] fileInfo = info.GetFiles("*.*");
+                foreach(FileInfo f in fileInfo)
+                {
+                    g_fileSize += f.Length;
+                }
+
+                float mem_save = a_fileSize.Length / g_fileSize * 100;
+                float g_MB_fileSize = (g_fileSize / 1024) / 1024;
+                float a_MB_fileSize = (a_fileSize.Length / 1024) / 1024;
+                Debug.Log("Textures total file size: " + g_MB_fileSize.ToString("F2") + "MB");
+                Debug.Log("Atlas total file size: " + a_MB_fileSize.ToString("F2") + "MB");
+                Debug.Log("Memory saved with texture atlas: " + mem_save.ToString("F2") + "%");
+
+
+            }
         }
 
         GUILayout.Label(genAtlas, texPreviewStyle);
